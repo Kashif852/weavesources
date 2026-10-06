@@ -1,0 +1,17 @@
+# Netlify config.
+#
+# NOTE: this file is ignored by drag-and-drop deploys, which have no build step.
+# For drag-and-drop, run ./scripts/build-static.sh and upload the ./out folder.
+#
+# This config applies when the site is deployed from a connected git repo,
+# which is the better long-term setup: Netlify then runs the build and its
+# Next.js runtime, so /api/submit works as a serverless function and the
+# contact forms post properly instead of falling back to mailto.
+# Remember to set FORM_WEBHOOK_URL in the Netlify UI for that to deliver.
+
+[build]
+  command = "npm run build"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "22"
