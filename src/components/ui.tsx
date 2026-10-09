@@ -11,8 +11,8 @@ export const Arrow = ({ className = "arrow" }: { className?: string }) => (
    The leaf-and-swan mark and the wordmark are fixed-colour, so they are served
    as images rather than currentColor SVG: the green and tan must not shift with
    whatever text colour surrounds them. */
-const MARK_ASPECT = 633 / 512;
-const LOCKUP_ASPECT = 316 / 96;
+const MARK_ASPECT = 161 / 128;
+const LOCKUP_ASPECT = 610 / 160;
 
 export function Mark({ size = 26 }: { size?: number }) {
   return (
@@ -29,7 +29,7 @@ export function Mark({ size = 26 }: { size?: number }) {
 
 export function Logo({
   className = "",
-  height = 26,
+  height = 40,
   onDark = false,
 }: {
   className?: string;
@@ -38,6 +38,12 @@ export function Logo({
 }) {
   // `onDark` swaps in the variant whose "WEAVE" wordmark is paper-coloured, so
   // the lockup stays legible on the ink footer.
+  //
+  // The lockup carries a small "SOURCES" line that needs roughly 8px of cap
+  // height to stay readable, which is why the default is 40px rather than the
+  // 26px the old geometric mark used. On narrow phones it steps down to 32px
+  // via CSS so it cannot crowd the menu button; the width/height attributes
+  // still reserve space, so nothing shifts while the image loads.
   return (
     <span className={`inline-flex items-center ${className}`}>
       <img
@@ -46,7 +52,7 @@ export function Logo({
         width={Math.round(height * LOCKUP_ASPECT)}
         height={height}
         aria-hidden
-        className="object-contain"
+        className="h-8 w-auto object-contain sm:h-10"
       />
       <span className="sr-only">WeaveSources</span>
     </span>
