@@ -52,7 +52,7 @@ export const site = {
 
   // ── Contact ─────────────────────────────────────────────
   contact: {
-    email: "hello@weavesources.com" as string | null,
+    email: "sales@weavesources.com" as string | null,
     lines: [
       { region: "United States", display: "+1 727 833 3236", digits: "17278333236", whatsapp: true },
       { region: "Pakistan", display: "+92 303 2831741", digits: "923032831741", whatsapp: true },
