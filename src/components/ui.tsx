@@ -29,7 +29,7 @@ export function Mark({ size = 26 }: { size?: number }) {
 
 export function Logo({
   className = "",
-  height = 40,
+  height = 48,
   onDark = false,
 }: {
   className?: string;
@@ -39,11 +39,12 @@ export function Logo({
   // `onDark` swaps in the variant whose "WEAVE" wordmark is paper-coloured, so
   // the lockup stays legible on the ink footer.
   //
-  // The lockup carries a small "SOURCES" line that needs roughly 8px of cap
-  // height to stay readable, which is why the default is 40px rather than the
-  // 26px the old geometric mark used. On narrow phones it steps down to 32px
-  // via CSS so it cannot crowd the menu button; the width/height attributes
-  // still reserve space, so nothing shifts while the image loads.
+  // The lockup's "SOURCES" line is only 22% of its height, so the logo must be
+  // large for that line to resolve: at 48px it gets ~10.7px of cap height,
+  // comfortably readable, where 40px gave a marginal 8.9px and the original
+  // 26px gave an illegible 5.8px. Phones step down to 40px so the lockup
+  // cannot crowd the menu button. The width/height attributes reserve layout
+  // space, so nothing shifts while the image loads.
   return (
     <span className={`inline-flex items-center ${className}`}>
       <img
@@ -52,7 +53,7 @@ export function Logo({
         width={Math.round(height * LOCKUP_ASPECT)}
         height={height}
         aria-hidden
-        className="h-8 w-auto object-contain sm:h-10"
+        className="h-10 w-auto object-contain sm:h-12"
       />
       <span className="sr-only">WeaveSources</span>
     </span>

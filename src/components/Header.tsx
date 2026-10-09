@@ -43,7 +43,7 @@ export default function Header() {
       <div
         className={`transition-all duration-500 ${scrolled || open ? "bg-paper/85 backdrop-blur-xl shadow-[0_1px_0_rgb(29_28_26/0.08)]" : ""}`}
       >
-        <div className="wrap flex h-[68px] items-center justify-between gap-6">
+        <div className="wrap flex h-[76px] items-center justify-between gap-6">
           <Link href="/" aria-label="WeaveSources home" className="shrink-0">
             <Logo />
           </Link>
@@ -93,7 +93,7 @@ export default function Header() {
 
       {/* Mobile menu */}
       <div
-        className={`fixed inset-x-0 top-[68px] bottom-0 bg-paper transition-all duration-500 lg:hidden ${open ? "visible opacity-100" : "invisible opacity-0"}`}
+        className={`fixed inset-x-0 top-[76px] bottom-0 bg-paper transition-all duration-500 lg:hidden ${open ? "visible opacity-100" : "invisible opacity-0"}`}
       >
         <nav className="wrap flex h-full flex-col pt-6 pb-10" aria-label="Mobile">
           {[...nav, { href: "/buyer-confidence", label: "Buyer confidence" }, { href: "/contact", label: "Contact" }].map((n, i) => {
