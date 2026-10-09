@@ -86,4 +86,6 @@ rm -rf .next/dev/types .next/types
 
 echo "==> Building static export"
 rm -rf out
-npx next build
+# Tells the form not to POST to /api/submit, which this build does not include.
+# EmailJS still delivers the submission from the browser.
+NEXT_PUBLIC_HAS_API=0 npx next build

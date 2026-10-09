@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useMemo, useState, type FormEvent } from "react";
 import { specKeys } from "@/content/spec";
+import emailjs from "@emailjs/browser";
 import { Arrow } from "./ui";
 
 export type FieldDef = {
@@ -73,20 +74,62 @@ export default function BuyerForm({
       return;
     }
     setStatus("sending");
+
+    const hp = (e.currentTarget.elements.namedItem("company_website") as HTMLInputElement)?.value;
+    // Honeypot: bots fill the hidden field. Show success, send nothing.
+    if (hp) {
+      setStatus("sent");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      return;
+    }
+
+    const SERVICE = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID;
+    const TEMPLATE = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID;
+    const PUBLIC_KEY = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY;
+
+    if (!SERVICE || !TEMPLATE || !PUBLIC_KEY) {
+      // No credentials: fall back to the mailto / copy panel rather than
+      // pretending the brief was received.
+      setStatus("unconfigured");
+      return;
+    }
+
     try {
-      const hp = (e.currentTarget.elements.namedItem("company_website") as HTMLInputElement)?.value;
-      const res = await fetch("/api/submit", {
+      await emailjs.send(
+        SERVICE,
+        TEMPLATE,
+        {
+          // The buyer, so a reply goes straight back to them.
+          from_name: values.name ?? "",
+          from_email: values.email ?? "",
+          reply_to: values.email ?? "",
+          from_number: values.phone ?? "",
+          company: values.company ?? "",
+          country: values.country ?? "",
+          subject: kind === "sample" ? "Sample request" : "Sourcing brief",
+          // Every answered field, label: value, one per line. This is what
+          // makes one template cover both forms and any future field.
+          message: summary,
+          to_name: "WeaveSources",
+        },
+        { publicKey: PUBLIC_KEY }
+      );
+      setStatus("sent");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } catch (err) {
+      console.error("[BuyerForm] EmailJS send failed", err);
+      setStatus("error");
+    }
+
+    // Best-effort second copy to the server webhook (Zapier/CRM), for Node
+    // deploys where /api/submit exists. Skipped on the static export, where
+    // that route is not built. Never blocks or fails what the buyer sees.
+    if (process.env.NEXT_PUBLIC_HAS_API !== "0") {
+      void fetch("/api/submit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ kind, values, company_website: hp }),
-      });
-      const data = await res.json().catch(() => ({}));
-      if (res.ok && data.ok) {
-        setStatus("sent");
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      } else setStatus(data.reason === "not_configured" ? "unconfigured" : "error");
-    } catch {
-      setStatus("error");
+      }).catch(() => {});
     }
   }
 
