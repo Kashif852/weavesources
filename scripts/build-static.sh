@@ -81,6 +81,9 @@ const nextConfig: NextConfig = {
 export default nextConfig;
 CFG
 
+echo "==> Clearing generated route types (they still reference the moved API route)"
+rm -rf .next/dev/types .next/types
+
 echo "==> Building static export"
 rm -rf out
 npx next build

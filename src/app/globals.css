@@ -12,6 +12,9 @@
   --color-clay-deep: #7f371d;
   --color-clay-soft: #f0dfd4;
   --color-sage: #8d9585;
+  /* Logo colours, sampled from the brand artwork in public/brand/. */
+  --color-brand-green: #1e3f2c;
+  --color-brand-tan: #c9b59c;
   --font-sans: "Instrument Sans Variable", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "IBM Plex Mono", ui-monospace, monospace;
   --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);

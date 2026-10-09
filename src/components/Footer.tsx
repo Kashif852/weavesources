@@ -44,7 +44,7 @@ export default function Footer() {
       <div className="wrap pt-20 pb-10">
         <div className="grid gap-14 lg:grid-cols-12">
           <div className="lg:col-span-4">
-            <Logo />
+            <Logo onDark />
             <p className="mt-6 max-w-sm text-[15px] leading-relaxed text-paper/65">
               A textile sourcing partner for international buyers. Towels made by vetted manufacturing partners in Pakistan — specified, sampled and checked before they ship.
             </p>
