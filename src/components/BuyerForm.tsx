@@ -106,7 +106,11 @@ export default function BuyerForm({
           from_number: values.phone ?? "",
           company: values.company ?? "",
           country: values.country ?? "",
-          subject: kind === "sample" ? "Sample request" : "Sourcing brief",
+          // Subject carries who it is from, so the inbox list is scannable
+          // without opening each one.
+          subject: `${kind === "sample" ? "Sample request" : "Sourcing brief"}${values.company ? ` — ${values.company}` : ""}`,
+          kind_label: kind === "sample" ? "Sample request" : "Sourcing brief",
+          time: new Date().toLocaleString("en-GB", { dateStyle: "medium", timeStyle: "short" }),
           // Every answered field, label: value, one per line. This is what
           // makes one template cover both forms and any future field.
           message: summary,
