@@ -1,5 +1,5 @@
 /**
- * Receives sample requests and sourcing briefs.
+ * Receives sample requests, sourcing briefs and buyer inquiries.
  * Forwards them as JSON to FORM_WEBHOOK_URL (Zapier, Make, Formspree, Slack, CRM…).
  * If no webhook is configured, it reports `not_configured` so the form can offer
  * an email / copy fallback instead of pretending the brief was received.
@@ -17,7 +17,7 @@ export async function POST(req: Request) {
   // Honeypot: bots fill hidden fields. Pretend success, drop silently.
   if (body.company_website) return Response.json({ ok: true });
 
-  const kind = body.kind === "sample" ? "sample" : body.kind === "brief" ? "brief" : null;
+  const kind = body.kind === "sample" || body.kind === "brief" || body.kind === "inquiry" ? body.kind : null;
   if (!kind || !body.values || typeof body.values !== "object") {
     return Response.json({ ok: false, reason: "bad_request" }, { status: 400 });
   }

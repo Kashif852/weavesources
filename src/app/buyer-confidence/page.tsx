@@ -3,6 +3,7 @@ import Link from "next/link";
 import { PageHero, Button, Tbc } from "@/components/ui";
 import { site } from "@/content/site";
 import { journey, qcCheckpoints } from "@/content/process";
+import { credentials } from "@/content/partners";
 
 export const metadata: Metadata = {
   title: "Buyer confidence — who we are and how to verify us",
@@ -74,21 +75,22 @@ export default function Page() {
             <p>Each order comes with documents appropriate to its destination and terms — typically a commercial invoice, packing list and transport document, plus a certificate of origin and pre-shipment check report where required. Ask early which documents your customs broker needs.</p>
           </Row>
           <Row id="certs" title="Certifications">
-            {site.certifications.length ? (
+            {credentials.length ? (
               <ul className="space-y-3">
-                {site.certifications.map((x) => (
-                  <li key={x.name + x.holder} className="rounded-2xl bg-linen p-5">
+                {credentials.map((x) => (
+                  <li key={x.id} className="rounded-2xl bg-linen p-5">
                     <p className="font-medium text-ink">{x.name}</p>
-                    <p className="text-[14.5px]">Held by {x.holder} · verified {x.verifiedOn}{x.link && <> · <a className="link-u" href={x.link} target="_blank" rel="noopener">certificate ↗</a></>}</p>
+                    <p className="text-[14.5px]">Held by {x.holder} · issued by {x.issuer} · scope: {x.scope} · checked {x.checkedOn}</p>
                   </li>
                 ))}
               </ul>
             ) : (
               <>
                 <p>No certifications are listed yet. In textiles, certificates such as product-safety or social-compliance standards are held by the manufacturer, not the sourcing company.</p>
-                <p>As we verify certificates held by our manufacturing partners, we&apos;ll list each one here with the holder&apos;s name and the date we checked it. If your order requires a specific certification, include it in your brief and we&apos;ll only propose partners who can evidence it.</p>
+                <p>As we verify certificates held by our manufacturing partners, we&apos;ll list each one with the holder, issuing body, scope, facility and validity. If your order requires a specific certification, include it in your brief and we&apos;ll only propose partners who can evidence it.</p>
               </>
             )}
+            <p><Link href="/partners" className="link-u text-ink">Partners &amp; credentials →</Link></p>
           </Row>
           <Row id="contact" title="Contact">
             <ul className="space-y-2">

@@ -1,6 +1,6 @@
 /** Options for the specification builder and forms. Reference guidance only. */
 
-export const uses = ["Hotel", "Boutique hotel", "Spa", "Gym", "Salon", "Vacation rental", "Retail / private label", "Distribution"];
+export const uses = ["Hotel", "Boutique hotel", "Spa", "Gym", "Salon", "Vacation rental", "Resort / pool", "Restaurant / bar", "Retail / private label", "Distribution"];
 
 export const productTypes = [
   { name: "Bath towel", sizes: ["70 × 140 cm", "76 × 152 cm", "27 × 54 in", "30 × 56 in"] },
@@ -10,6 +10,12 @@ export const productTypes = [
   { name: "Spa towel", sizes: ["70 × 140 cm", "80 × 160 cm (wrap)", "40 × 70 cm"] },
   { name: "Gym / sports towel", sizes: ["30 × 90 cm", "40 × 80 cm", "50 × 100 cm"] },
   { name: "Bath mat", sizes: ["50 × 80 cm", "20 × 30 in"] },
+  { name: "Towel set", sizes: ["Bath + hand + washcloth", "Bath + hand + washcloth + bath mat"] },
+  { name: "Beach / pool towel", sizes: ["76 × 152 cm", "30 × 60 in", "90 × 180 cm"] },
+  { name: "Kitchen / tea towel", sizes: ["50 × 70 cm", "45 × 65 cm", "20 × 28 in"] },
+  { name: "Waffle cloth", sizes: ["33 × 33 cm", "40 × 60 cm", "50 × 70 cm"] },
+  { name: "Bar mop", sizes: ["16 × 19 in", "40 × 50 cm"] },
+  { name: "Bathrobe", sizes: ["S/M", "L/XL", "One size"] },
 ];
 
 export const materials = ["100% cotton", "Combed cotton", "Ring-spun cotton", "Zero-twist cotton", "Cotton / polyester blend", "Not sure — advise me"];
@@ -40,7 +46,7 @@ export const packagings = ["Bulk export carton", "Bundled (e.g. 10 pcs) in carto
 export const quantities = ["Under 500 pcs", "500 – 2,000 pcs", "2,000 – 10,000 pcs", "10,000+ pcs", "Not sure yet"];
 export const timelines = ["As soon as possible", "1–3 months", "3–6 months", "6+ months", "Researching for now"];
 export const budgets = ["Prefer not to say", "Under US$5,000", "US$5,000 – 25,000", "US$25,000 – 100,000", "US$100,000+"];
-export const businessTypes = ["Hotel / hotel group", "Boutique hotel", "Spa / wellness", "Gym / studio", "Salon", "Vacation rental operator", "Distributor / wholesaler", "Retail brand", "Private-label brand", "Other"];
+export const businessTypes = ["Importer / wholesale distributor", "Hotel or hospitality supply company", "Commercial linen supplier", "Hotel / hotel group", "Boutique hotel", "Spa / wellness", "Gym / studio", "Salon", "Vacation rental operator", "Retail / e-commerce brand", "Private-label brand", "Institutional buyer", "Other"];
 
 /** Spec fields carried between builder → sample → brief via URL query. */
 export const specKeys = ["use", "product", "material", "gsm", "size", "colour", "border", "branding", "packaging", "quantity", "destination"] as const;

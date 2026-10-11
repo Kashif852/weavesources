@@ -49,7 +49,7 @@ export default function Page() {
         <div className="lg:col-span-4">
           <div className="lg:sticky lg:top-28">
             <p className="eyebrow mb-6">Request a sample</p>
-            <h1 className="h2 !text-[clamp(2.4rem,4.4vw,3.8rem)]">Feel it before you buy it.</h1>
+            <h1 className="title">Feel it before you buy it.</h1>
             <p className="lede mt-6">Specifications tell you what a towel is. A sample tells you how it feels.</p>
             <div className="relative mt-10 hidden h-40 lg:block">
               <Photo

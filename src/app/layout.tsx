@@ -5,19 +5,20 @@ import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { MobileBar, Reveal } from "@/components/Chrome";
+import WhatsAppChat from "@/components/WhatsApp";
 import { site } from "@/content/site";
 
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
   title: {
-    default: "WeaveSources — Towel sourcing for hotels, spas and private-label brands",
+    default: "WeaveSources — Pakistani towel sourcing for US importers, hotels & private-label brands",
     template: "%s · WeaveSources",
   },
   description: site.description,
   openGraph: {
     type: "website",
     siteName: "WeaveSources",
-    title: "WeaveSources — Know exactly what you're ordering.",
+    title: "WeaveSources — Pakistani towels, sourced to your specification",
     description: site.description,
     url: site.url,
   },
@@ -61,6 +62,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <main id="main">{children}</main>
         <Footer />
         <MobileBar />
+        <WhatsAppChat />
         <Reveal />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(orgLd) }} />
       </body>

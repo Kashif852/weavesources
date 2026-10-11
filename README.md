@@ -1,7 +1,8 @@
 # WeaveSources — website
 
-A Next.js 16 (App Router) site for WeaveSources, a B2B towel sourcing brand.
-41 static pages, one API route, no client-side data stores, no trackers.
+A Next.js 16 (App Router) site for WeaveSources, a B2B sourcing partner for
+Pakistani towels, aimed primarily at US importers, hospitality suppliers and
+private-label brands. 68 static pages, one API route, no trackers.
 
 ```bash
 npm install
@@ -25,7 +26,10 @@ claims a fact that isn't in that file.
 | Verified certificates (with the **holder's** name and date checked) | `site.certifications` | Buyer confidence |
 | Named, verifiable testimonials | `site.testimonials` | Home (replaces the "reviews you can verify" block) |
 | Regions: mark a market `partner`/"Business development" only if a real person works there | `site.regions` | Home & About map |
-| Partner-confirmed GSM / sizes / construction / MOQ per product | `src/content/products.ts → confirmed` | Product pages (else "Available according to specification") |
+| Partner-confirmed material / GSM / sizes / construction / colours / packaging / MOQ / compliance per product | `src/content/products.ts → confirmed` | Product pages + PDF catalog (else "Specifications confirmed during quotation") |
+| Which categories are live: `active`, `enquiry` (labelled "sourced on enquiry") or `hidden` | `src/content/products.ts → categories[].availability` | Everywhere products appear |
+| Partner profiles (only with permission), partner certificates (holder, issuer, scope, facility, validity, verification) and verified capabilities | `src/content/partners.ts` | /partners, /quality, /manufacturing, home, catalog |
+| Pakistan export statistics (UN Comtrade, HS 630260) | `src/content/markets.ts` | Home, catalog |
 | Real product photography | drop files into `public/images/` — see `docs/photography-brief.md` | Hero, collection, product pages, sample sections |
 
 ### Process commitments the site makes — keep them true
@@ -40,6 +44,9 @@ The copy promises these as how WeaveSources operates. Change the wording in
 - Replies within one business day (`site.contact.hours`)
 - Pre-shipment check results are shared before shipment; partner changes need buyer approval
 - "Vetted" manufacturing partners
+- The approved sample is sealed as the reference and a counterpart is kept for production comparison (`/quality`)
+- A written check plan is agreed per order; check results are recorded and shared before shipment
+- Lab tests and third-party inspections are NOT included by default (keep that wording unless it changes)
 
 Legal pages (`/legal/*`) are drafts — have them reviewed.
 
@@ -60,13 +67,32 @@ Favicon: `src/app/icon.svg` and `src/app/apple-icon.png`. Regenerate everything 
 The mark is a 3×3 plain weave turned 45° — threads passing over and under each other.
 Keep clear space around it of at least half the mark's height; don't recolour beyond ink (`#1d1c1a`) and paper (`#f5f2ec`).
 
+## Catalog, products and media
+
+- **Products** — one data source: `src/content/products.ts` (6 categories, 15
+  products). Product pages, `/collections/*`, `/products`, forms, sitemap and the
+  PDF all read from it. Never put typical values in `confirmed`.
+- **PDF catalog** — `./scripts/make-catalog.sh` builds, serves `/catalog/print`
+  and prints it with headless Chrome to
+  `public/catalog/weavesources-towel-sourcing-catalog.pdf`. Rerun and commit
+  the PDF whenever products or contact details change.
+- **Media** — source files in `./content`; `node scripts/prepare-media.mjs`
+  writes compressed, descriptively named images to `public/images` and the
+  looping clips to `public/media`. All current imagery is AI-generated and is
+  labelled as illustration on the site — see `public/images/CREDITS.md`.
+
 ## Forms
 
-`/sample` and `/brief` POST to `/api/submit`, which forwards JSON to
-**`FORM_WEBHOOK_URL`** (Zapier, Make, Formspree, a CRM webhook, Slack…).
+`/sample`, `/brief` and the inquiry form (home `#inquiry` and `/contact`) are
+delivered by **EmailJS** from the browser (`NEXT_PUBLIC_EMAILJS_*`, see
+`.env.example`); the success message only appears after EmailJS accepts the
+message. On Node deploys a copy is also POSTed to `/api/submit`, which forwards
+JSON to **`FORM_WEBHOOK_URL`** (Zapier, Make, a CRM…). Links such as
+`/contact?intent=Request+a+quote&interest=Hotel+Bath+Towels#inquiry` preselect
+the form.
 Without it, submissions are **not** silently swallowed: the form tells the buyer it
 couldn't send and offers a pre-filled email (if `site.contact.email` is set) and
-"copy my details". A hidden honeypot field filters basic bots.
+"copy my details". A hidden honeypot field and a minimum fill time filter basic bots.
 
 The specification builder (`/specification`) passes the spec to both forms via the URL,
 so a configured towel arrives with the request.

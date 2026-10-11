@@ -2,10 +2,12 @@
 
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { useMemo, useState, type FormEvent } from "react";
+import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import { specKeys } from "@/content/spec";
 import emailjs from "@emailjs/browser";
 import { Arrow } from "./ui";
+import { site } from "@/content/site";
+import { WaIcon, waLink } from "./WhatsApp";
 
 export type FieldDef = {
   name: string;
@@ -20,45 +22,71 @@ export type FieldDef = {
 export type Section = { title: string; note?: string; fields: FieldDef[] };
 
 type Status = "idle" | "sending" | "sent" | "error" | "unconfigured";
+type Kind = "sample" | "brief" | "inquiry";
 
-export default function BuyerForm({
-  kind,
-  sections,
-  submitLabel,
-  successTitle,
-  nextSteps,
-  contactEmail,
-}: {
-  kind: "sample" | "brief";
+const KIND_LABEL: Record<Kind, string> = {
+  sample: "Sample request",
+  brief: "Sourcing brief",
+  inquiry: "Buyer inquiry",
+};
+
+// A person cannot read and complete the form this quickly; scripts can.
+const MIN_FILL_MS = 2500;
+
+type Props = {
+  kind: Kind;
   sections: Section[];
   submitLabel: string;
   successTitle: string;
   nextSteps: { t: string; d: string }[];
   contactEmail: string | null;
-}) {
+  prefill?: Record<string, string>;
+};
+
+/**
+ * Reads ?field=value from the URL (specification builder, product pages,
+ * "Request documentation" links) and passes it in as prefill. Needs a
+ * <Suspense> boundary; use the named `BuyerForm` where the URL is irrelevant.
+ */
+export default function BuyerFormFromUrl(props: Omit<Props, "prefill">) {
   const sp = useSearchParams();
+  const { sections } = props;
   const prefill = useMemo(() => {
     const o: Record<string, string> = {};
-    specKeys.forEach((k) => {
+    const names = new Set<string>([...specKeys, ...sections.flatMap((s) => s.fields.map((f) => f.name))]);
+    names.forEach((k) => {
       const v = sp.get(k);
-      if (v) o[k] = v;
+      if (v) o[k] = v.slice(0, 300);
     });
-    const p = sp.get("product");
-    if (p) o.product = p;
     return o;
-  }, [sp]);
-  const fromSpec = Object.keys(prefill).length > 2;
+  }, [sp, sections]);
+  return <BuyerForm key={JSON.stringify(prefill)} {...props} prefill={prefill} />;
+}
+
+export function BuyerForm({ kind, sections, submitLabel, successTitle, nextSteps, contactEmail, prefill = {} }: Props) {
+  const fromSpec = specKeys.filter((k) => prefill[k]).length > 2;
 
   const [values, setValues] = useState<Record<string, string>>(prefill);
   const [status, setStatus] = useState<Status>("idle");
   const [errors, setErrors] = useState<Record<string, string>>({});
   const set = (n: string, v: string) => setValues((s) => ({ ...s, [n]: v }));
+  const rootRef = useRef<HTMLDivElement>(null);
+  const startedAt = useRef(0);
+  useEffect(() => {
+    startedAt.current = Date.now();
+  }, []);
+  // Bring the confirmation (or the error) into view wherever the form sits.
+  const reveal = () => requestAnimationFrame(() => rootRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }));
 
   const all = sections.flatMap((s) => s.fields);
   const summary = all
     .filter((f) => values[f.name])
     .map((f) => `${f.label}: ${values[f.name]}`)
     .join("\n");
+
+  // WhatsApp alternative: the same details, sent from the buyer's own WhatsApp.
+  const waDigits = site.contact.lines.find((l) => l.whatsapp)?.digits ?? null;
+  const waText = `Hello WeaveSources — ${values.intent ?? KIND_LABEL[kind]}${summary ? `\n\n${summary}` : ""}`;
 
   async function submit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -68,6 +96,9 @@ export default function BuyerForm({
       if (f.required && !v) errs[f.name] = "Required";
       if (f.type === "email" && v && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) errs[f.name] = "Check this email address";
     });
+    if (!errs.form && Date.now() - startedAt.current < MIN_FILL_MS) {
+      errs.form = "Please take a moment to check your details, then send again.";
+    }
     setErrors(errs);
     if (Object.keys(errs).length) {
       document.getElementById(`f-${Object.keys(errs)[0]}`)?.focus();
@@ -79,7 +110,7 @@ export default function BuyerForm({
     // Honeypot: bots fill the hidden field. Show success, send nothing.
     if (hp) {
       setStatus("sent");
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      reveal();
       return;
     }
 
@@ -108,8 +139,8 @@ export default function BuyerForm({
           country: values.country ?? "",
           // Subject carries who it is from, so the inbox list is scannable
           // without opening each one.
-          subject: `${kind === "sample" ? "Sample request" : "Sourcing brief"}${values.company ? ` — ${values.company}` : ""}`,
-          kind_label: kind === "sample" ? "Sample request" : "Sourcing brief",
+          subject: `${values.intent ?? KIND_LABEL[kind]}${values.company ? ` — ${values.company}` : ""}`,
+          kind_label: values.intent ?? KIND_LABEL[kind],
           time: new Date().toLocaleString("en-GB", { dateStyle: "medium", timeStyle: "short" }),
           // Every answered field, label: value, one per line. This is what
           // makes one template cover both forms and any future field.
@@ -119,10 +150,33 @@ export default function BuyerForm({
         { publicKey: PUBLIC_KEY }
       );
       setStatus("sent");
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      reveal();
+
+      // Acknowledgement to the buyer. Sent after the internal copy has
+      // succeeded, and deliberately not awaited: if it fails, the buyer has
+      // still submitted successfully and must not be shown an error.
+      const AUTOREPLY = process.env.NEXT_PUBLIC_EMAILJS_AUTOREPLY_ID;
+      if (AUTOREPLY && values.email) {
+        void emailjs
+          .send(
+            SERVICE,
+            AUTOREPLY,
+            {
+              to_name: values.name ?? "there",
+              to_email: values.email,
+              reply_to: contactEmail ?? "",
+              kind_label: (values.intent ?? KIND_LABEL[kind]).toLowerCase(),
+              company: values.company ?? "",
+              summary,
+            },
+            { publicKey: PUBLIC_KEY }
+          )
+          .catch((err) => console.error("[BuyerForm] auto-reply failed", err));
+      }
     } catch (err) {
       console.error("[BuyerForm] EmailJS send failed", err);
       setStatus("error");
+      reveal();
     }
 
     // Best-effort second copy to the server webhook (Zapier/CRM), for Node
@@ -139,7 +193,7 @@ export default function BuyerForm({
 
   if (status === "sent") {
     return (
-      <div className="rounded-[28px] bg-linen p-8 md:p-14">
+      <div ref={rootRef} className="scroll-mt-28 rounded-[28px] bg-linen p-8 md:p-14" role="status">
         <div className="flex h-14 w-14 items-center justify-center rounded-full bg-ink text-paper">
           <svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden><path d="M4 11.5 9 16l9-10" stroke="currentColor" strokeWidth="2" /></svg>
         </div>
@@ -157,14 +211,15 @@ export default function BuyerForm({
           ))}
         </ol>
         <div className="mt-10 flex flex-wrap gap-3">
-          <Link href="/resources" className="btn btn-ghost">Read buyer resources <Arrow /></Link>
-          <Link href="/" className="btn btn-ghost">Back to home</Link>
+          <Link href="/products" className="btn btn-ghost">Browse products <Arrow /></Link>
+          <Link href="/resources" className="btn btn-ghost">Read buyer resources</Link>
         </div>
       </div>
     );
   }
 
   return (
+    <div ref={rootRef} className="scroll-mt-28">
     <form onSubmit={submit} noValidate className="relative">
       {fromSpec && (
         <div className="mb-10 rounded-2xl bg-clay-soft px-5 py-4 text-[15px] text-clay-deep">
@@ -202,7 +257,7 @@ export default function BuyerForm({
               };
               return (
                 <div key={f.name} className={f.half ? "" : "sm:col-span-2"}>
-                  <label htmlFor={id} className="mb-2 flex items-baseline justify-between text-[14.5px] font-medium">
+                  <label htmlFor={id} id={`${id}-label`} className="mb-2 flex items-baseline justify-between text-[14.5px] font-medium">
                     <span>{f.label}{f.required && <span className="text-clay"> *</span>}</span>
                     {!f.required && <span className="font-mono text-[10.5px] font-normal uppercase tracking-[0.08em] text-muted">Optional</span>}
                   </label>
@@ -213,7 +268,7 @@ export default function BuyerForm({
                       {values[f.name] && !f.options?.includes(values[f.name]) && <option>{values[f.name]}</option>}
                     </select>
                   ) : f.type === "chips" ? (
-                    <div className="flex flex-wrap gap-2" role="radiogroup" aria-labelledby={id}>
+                    <div className="flex flex-wrap gap-2" role="group" aria-labelledby={`${id}-label`}>
                       <input type="hidden" {...common} />
                       {f.options?.map((o) => (
                         <button key={o} type="button" className="chip" aria-pressed={values[f.name] === o} onClick={() => set(f.name, o)}>{o}</button>
@@ -244,6 +299,17 @@ export default function BuyerForm({
         <button type="submit" disabled={status === "sending"} className="btn btn-primary w-full sm:w-auto disabled:opacity-60">
           {status === "sending" ? "Sending…" : submitLabel} {status !== "sending" && <Arrow />}
         </button>
+        {errors.form && <p className="mt-3 text-[13.5px] text-clay" role="alert">{errors.form}</p>}
+        {waDigits && (
+          <a
+            href={waLink(waDigits, waText)}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="link-u mt-3 inline-flex items-center gap-2 text-[14px] font-medium text-[#187a41]"
+          >
+            <WaIcon size={16} /> Prefer WhatsApp? Send these details on WhatsApp
+          </a>
+        )}
         <p className="mt-3 text-[13px] text-muted">
           We use your details only to respond to this request. See our <Link href="/legal/privacy" className="link-u">privacy note</Link>.
         </p>
@@ -254,15 +320,23 @@ export default function BuyerForm({
           <p className="font-medium">We couldn&apos;t send this automatically.</p>
           <p className="mt-1">
             Nothing is lost — {contactEmail ? (
-              <>email it to <a className="underline" href={`mailto:${contactEmail}?subject=${encodeURIComponent(kind === "sample" ? "Sample request" : "Sourcing brief")}&body=${encodeURIComponent(summary)}`}>{contactEmail}</a> with one click, or </>
+              <>email it to <a className="underline" href={`mailto:${contactEmail}?subject=${encodeURIComponent(values.intent ?? KIND_LABEL[kind])}&body=${encodeURIComponent(summary)}`}>{contactEmail}</a> with one click, or </>
             ) : null}
             copy your details below.
           </p>
-          <button type="button" className="btn btn-ghost mt-4 !min-h-[42px]" onClick={() => navigator.clipboard?.writeText(summary)}>
-            Copy my details
-          </button>
+          <div className="mt-4 flex flex-wrap gap-3">
+            {waDigits && (
+              <a href={waLink(waDigits, waText)} target="_blank" rel="noopener noreferrer" className="btn !min-h-[42px] bg-[#187a41] text-white hover:bg-[#13653a]">
+                <WaIcon size={16} /> Send on WhatsApp
+              </a>
+            )}
+            <button type="button" className="btn btn-ghost !min-h-[42px]" onClick={() => navigator.clipboard?.writeText(summary)}>
+              Copy my details
+            </button>
+          </div>
         </div>
       )}
     </form>
+    </div>
   );
 }

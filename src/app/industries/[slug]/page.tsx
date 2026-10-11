@@ -27,7 +27,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
     <>
       <section className="wrap pt-32 pb-16 md:pt-44 md:pb-20">
         <nav className="label mb-8" aria-label="Breadcrumb"><Link href="/industries" className="link-u">Industries</Link> <span className="mx-2">/</span> {i.name}</nav>
-        <h1 className="display max-w-5xl" data-reveal>{i.headline}</h1>
+        <h1 className="title max-w-4xl" data-reveal>{i.headline}</h1>
         <p className="eyebrow mt-8" data-reveal>For {i.name.toLowerCase()}</p>
       </section>
       <section className="wrap pb-20">

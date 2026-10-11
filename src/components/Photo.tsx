@@ -47,19 +47,21 @@ export default function Photo({
   fallback,
   priority = false,
   className = "",
+  alt,
 }: {
   slot: string;
   sizes: string;
   fallback: ReactNode;
   priority?: boolean;
   className?: string;
+  alt?: string;
 }) {
   const src = find(slot);
   if (!src) return <>{fallback}</>;
   return (
     <Image
       src={src}
-      alt={photoAlt[slot] ?? ""}
+      alt={alt ?? photoAlt[slot] ?? ""}
       fill
       sizes={sizes}
       priority={priority}

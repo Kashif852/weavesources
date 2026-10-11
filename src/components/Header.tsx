@@ -7,12 +7,20 @@ import { Logo, Arrow } from "./ui";
 
 const nav = [
   { href: "/products", label: "Products" },
-  { href: "/how-we-work", label: "How we work" },
+  { href: "/manufacturing", label: "Manufacturing" },
   { href: "/quality", label: "Quality" },
+  { href: "/partners", label: "Partners" },
   { href: "/private-label", label: "Private label" },
-  { href: "/industries", label: "Industries" },
   { href: "/resources", label: "Resources" },
   { href: "/about", label: "About" },
+];
+
+const moreNav = [
+  { href: "/how-we-work", label: "How we work" },
+  { href: "/industries", label: "Industries" },
+  { href: "/catalog", label: "Product catalog" },
+  { href: "/buyer-confidence", label: "Buyer confidence" },
+  { href: "/contact", label: "Contact" },
 ];
 
 export default function Header() {
@@ -20,7 +28,8 @@ export default function Header() {
   const [open, setOpen] = useState(false);
   const path = usePathname();
   // A section is active on its own page and any page beneath it (e.g. /products/bath-sheets).
-  const isActive = (href: string) => path === href || path.startsWith(`${href}/`);
+  const isActive = (href: string) =>
+    path === href || path.startsWith(`${href}/`) || (href === "/products" && path.startsWith("/collections/"));
 
   useEffect(() => {
     const on = () => setScrolled(window.scrollY > 12);
@@ -47,7 +56,7 @@ export default function Header() {
           <Link href="/" aria-label="WeaveSources home" className="shrink-0">
             <Logo />
           </Link>
-          <nav className="hidden items-center gap-7 lg:flex" aria-label="Primary">
+          <nav className="hidden items-center gap-6 lg:flex xl:gap-7" aria-label="Primary">
             {nav.map((n) => {
               const active = isActive(n.href);
               return (
@@ -67,9 +76,9 @@ export default function Header() {
             <Link
               href="/brief"
               aria-current={isActive("/brief") ? "page" : undefined}
-              className={`btn btn-ghost !min-h-[42px] !px-5 !text-[14px] hidden md:inline-flex ${isActive("/brief") ? "!border-ink bg-ink/[0.05]" : ""}`}
+              className={`btn btn-ghost !min-h-[42px] !px-5 !text-[14px] hidden md:inline-flex lg:hidden xl:inline-flex ${isActive("/brief") ? "!border-ink bg-ink/[0.05]" : ""}`}
             >
-              Sourcing brief
+              Request a quote
             </Link>
             <Link
               href="/sample"
@@ -95,15 +104,15 @@ export default function Header() {
       <div
         className={`fixed inset-x-0 top-[76px] bottom-0 bg-paper transition-all duration-500 lg:hidden ${open ? "visible opacity-100" : "invisible opacity-0"}`}
       >
-        <nav className="wrap flex h-full flex-col pt-6 pb-10" aria-label="Mobile">
-          {[...nav, { href: "/buyer-confidence", label: "Buyer confidence" }, { href: "/contact", label: "Contact" }].map((n, i) => {
+        <nav className="wrap flex h-full flex-col overflow-y-auto pt-4 pb-10" aria-label="Mobile">
+          {[...nav, ...moreNav].map((n, i) => {
             const active = isActive(n.href);
             return (
               <Link
                 key={n.href}
                 href={n.href}
                 aria-current={active ? "page" : undefined}
-                className={`flex items-center justify-between border-b border-ink/10 py-4 text-[26px] font-medium tracking-[-0.03em] ${active ? "text-clay" : ""}`}
+                className={`flex items-center justify-between border-b border-ink/10 py-3 text-[22px] font-medium tracking-[-0.03em] ${active ? "text-clay" : ""}`}
                 style={{ transition: "transform .6s var(--ease-out-soft), opacity .6s", transitionDelay: `${open ? i * 30 : 0}ms`, transform: open ? "none" : "translateY(10px)", opacity: open ? 1 : 0 }}
               >
                 <span className="flex items-center gap-3">
@@ -114,8 +123,8 @@ export default function Header() {
               </Link>
             );
           })}
-          <div className="mt-auto grid grid-cols-2 gap-3">
-            <Link href="/brief" className="btn btn-ghost">Sourcing brief</Link>
+          <div className="mt-auto grid grid-cols-2 gap-3 pt-6">
+            <Link href="/brief" className="btn btn-ghost">Request a quote</Link>
             <Link href="/sample" className="btn btn-primary">Request sample</Link>
           </div>
         </nav>

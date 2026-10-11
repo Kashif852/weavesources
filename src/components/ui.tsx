@@ -124,11 +124,11 @@ export function SectionHead({
 
 export function PageHero({ eyebrow, title, lede, children }: { eyebrow: string; title: ReactNode; lede?: ReactNode; children?: ReactNode }) {
   return (
-    <section className="wrap pt-36 pb-16 md:pt-44 md:pb-24">
+    <section className="wrap pt-32 pb-12 md:pt-36 md:pb-16">
       <p className="eyebrow mb-6" data-reveal>{eyebrow}</p>
-      <h1 className="display max-w-5xl" data-reveal style={{ "--d": "80ms" } as CSSProperties}>{title}</h1>
-      {lede && <div className="lede mt-8 max-w-2xl" data-reveal style={{ "--d": "160ms" } as CSSProperties}>{lede}</div>}
-      {children && <div className="mt-10" data-reveal style={{ "--d": "220ms" } as CSSProperties}>{children}</div>}
+      <h1 className="title max-w-4xl" data-reveal style={{ "--d": "80ms" } as CSSProperties}>{title}</h1>
+      {lede && <div className="lede mt-6 max-w-2xl" data-reveal style={{ "--d": "160ms" } as CSSProperties}>{lede}</div>}
+      {children && <div className="mt-8" data-reveal style={{ "--d": "220ms" } as CSSProperties}>{children}</div>}
     </section>
   );
 }

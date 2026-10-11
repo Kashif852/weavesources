@@ -1,11 +1,14 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Suspense } from "react";
 import { PageHero, Tbc, Arrow } from "@/components/ui";
+import BuyerFormFromUrl from "@/components/BuyerForm";
+import { InquiryForm, inquirySections, inquiryNextSteps } from "@/components/Inquiry";
 import { site } from "@/content/site";
 
 export const metadata: Metadata = {
-  title: "Contact",
-  description: "Contact WeaveSources by email, phone, WhatsApp or LinkedIn — or send a sample request or sourcing brief.",
+  title: "Contact — request a quote, sample or documentation",
+  description: "Contact WeaveSources to request a quote, a sample, partner documentation or the product catalog — by inquiry form, email, phone or WhatsApp. US office in Seattle; sourcing team in Karachi.",
   alternates: { canonical: "/contact" },
 };
 
@@ -47,6 +50,28 @@ export default function Page() {
           ))}
         </div>
       </section>
+      <section className="wrap scroll-mt-24 pb-24 md:pb-32" id="inquiry">
+        <div className="grid gap-14 lg:grid-cols-12">
+          <div className="lg:col-span-4">
+            <p className="eyebrow mb-5">Inquiry</p>
+            <h2 className="h2">Quote, sample or documents.</h2>
+            <p className="lede mt-6">Choose what you need and tell us about the product. Quantity and customisation are optional.</p>
+          </div>
+          <div className="lg:col-span-7 lg:col-start-6">
+            <Suspense fallback={<InquiryForm />}>
+              <BuyerFormFromUrl
+                kind="inquiry"
+                sections={inquirySections}
+                submitLabel="Send inquiry"
+                successTitle="Your inquiry has been sent."
+                contactEmail={site.contact.email}
+                nextSteps={inquiryNextSteps}
+              />
+            </Suspense>
+          </div>
+        </div>
+      </section>
+
       <section className="wrap pb-24 md:pb-32">
         <div className="grid gap-6 md:grid-cols-2">
           <Link href="/sample" className="group rounded-[24px] bg-ink p-8 text-paper md:p-10">

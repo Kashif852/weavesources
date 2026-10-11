@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { CSSProperties } from "react";
-import { products } from "@/content/products";
+import { visibleProducts as products } from "@/content/products";
 import { deliverables, faqs, qcCheckpoints, roles } from "@/content/process";
 import { articles } from "@/content/resources";
 import { site } from "@/content/site";
@@ -37,8 +37,8 @@ export function ProductGrid({ index, limit }: { index?: string; limit?: number }
       <SectionHead
         index={index}
         eyebrow="The collection"
-        title={<>Six towels.<br />Each made to your specification.</>}
-        lede="A focused starting range, built around how commercial towels are actually used. Every product is produced to the specification you approve — not picked from a catalogue."
+        title={<>The collection.<br />Each made to your specification.</>}
+        lede="Built around how commercial towels are actually used. Every product is produced to the specification you approve — not picked from stock."
       />
       <div className="mt-14 grid gap-x-6 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
         {list.map((p, i) => (
@@ -69,7 +69,7 @@ export function ProductGrid({ index, limit }: { index?: string; limit?: number }
         ))}
       </div>
       <p className="mt-14 text-[14px] text-muted" data-reveal>
-        Planned categories, once towels are established: bathrobes, bed linen, spa and kitchen textiles.
+        Product images are illustrative styling.
       </p>
     </section>
   );
@@ -502,7 +502,7 @@ export function SampleBand({ index }: { index?: string }) {
         <div className="grid gap-12 p-8 md:p-14 lg:grid-cols-12 lg:p-20">
           <div className="relative z-10 lg:col-span-7">
             <p className="eyebrow !text-white/60 mb-6" data-reveal>{index && <span className="mr-3">{index}</span>}Sample first</p>
-            <h2 className="display !text-[clamp(2.6rem,6vw,5.4rem)]" data-reveal>Feel it before you buy it.</h2>
+            <h2 className="title" data-reveal>Feel it before you buy it.</h2>
             <p className="mt-6 max-w-xl text-[19px] leading-relaxed text-white/80" data-reveal>
               Specifications tell you what a towel is. A sample tells you how it feels. Every new product starts with one.
             </p>
@@ -597,10 +597,10 @@ export function FinalCta() {
   return (
     <section className="wrap pb-24 pt-8 md:pb-32">
       <div className="grid gap-10 border-t border-ink/12 pt-16 lg:grid-cols-12">
-        <h2 className="display lg:col-span-8" data-reveal>Start with a sample.<br /><span className="text-muted">Decide with confidence.</span></h2>
+        <h2 className="title lg:col-span-8" data-reveal>Start with a sample.<br /><span className="text-muted">Decide with confidence.</span></h2>
         <div className="flex flex-col justify-end gap-3 lg:col-span-4" data-reveal>
-          <Button href="/sample" variant="primary" className="w-full">Request a sample</Button>
-          <Button href="/specification" variant="ghost" className="w-full">Build your specification</Button>
+          <Button href="/contact?intent=Request+a+quote#inquiry" variant="primary" className="w-full">Request a quote</Button>
+          <Button href="/sample" variant="ghost" className="w-full">Request a sample</Button>
           <p className="mt-2 text-center text-[13.5px] text-muted">{site.contact.hours}</p>
         </div>
       </div>

@@ -55,3 +55,7 @@ next-env.d.ts
 .idea
 .vscode/*
 !.vscode/extensions.json
+
+# Raw source media (large originals). Web-ready copies are generated into
+# public/images and public/media by: node scripts/prepare-media.mjs
+/content/

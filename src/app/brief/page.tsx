@@ -59,7 +59,7 @@ export default function Page() {
         <div className="lg:col-span-4">
           <div className="lg:sticky lg:top-28">
             <p className="eyebrow mb-6">Request a quote</p>
-            <h1 className="h2 !text-[clamp(2.4rem,4.4vw,3.8rem)]">Build your sourcing brief.</h1>
+            <h1 className="title">Build your sourcing brief.</h1>
             <p className="lede mt-6">The more we know, the more precise our reply. Unsure about a field? Leave it blank or choose &ldquo;advise me&rdquo; — that&apos;s what we&apos;re here for.</p>
             <div className="mt-10 rounded-2xl bg-linen p-6">
               <p className="label">What you&apos;ll get back</p>

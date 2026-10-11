@@ -28,7 +28,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
         <nav className="label mb-8" aria-label="Breadcrumb"><Link href="/resources" className="link-u">Buyer resources</Link> <span className="mx-2">/</span> {a.category}</nav>
         <div className="grid gap-12 lg:grid-cols-12">
           <header className="lg:col-span-8">
-            <h1 className="h2 !text-[clamp(2.4rem,5vw,4.4rem)]">{a.title}</h1>
+            <h1 className="title">{a.title}</h1>
             <p className="lede mt-6">{a.summary}</p>
             <p className="label mt-6">{a.minutes} min read</p>
           </header>

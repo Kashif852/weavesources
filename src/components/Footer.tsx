@@ -4,19 +4,23 @@ import { Logo, Tbc } from "./ui";
 
 const cols = [
   {
-    title: "Sourcing",
+    title: "Products",
     links: [
-      ["Products", "/products"],
+      ["All products", "/products"],
+      ["Bath & hand towels", "/collections/bath-hand-towels"],
+      ["Hotel & hospitality towels", "/collections/hotel-hospitality-towels"],
+      ["Product catalog (PDF)", "/catalog"],
       ["Build a specification", "/specification"],
       ["Private label", "/private-label"],
-      ["Industries", "/industries"],
     ],
   },
   {
     title: "How we work",
     links: [
       ["Our process", "/how-we-work"],
-      ["Quality", "/quality"],
+      ["Manufacturing & sourcing", "/manufacturing"],
+      ["Quality & compliance", "/quality"],
+      ["Partners & credentials", "/partners"],
       ["Buyer confidence", "/buyer-confidence"],
       ["Buyer resources", "/resources"],
     ],
@@ -25,9 +29,10 @@ const cols = [
     title: "Company",
     links: [
       ["About", "/about"],
+      ["Industries", "/industries"],
       ["Contact", "/contact"],
       ["Request a sample", "/sample"],
-      ["Send a sourcing brief", "/brief"],
+      ["Request a quote", "/brief"],
     ],
   },
 ];
@@ -46,7 +51,7 @@ export default function Footer() {
           <div className="lg:col-span-4">
             <Logo onDark />
             <p className="mt-6 max-w-sm text-[15px] leading-relaxed text-paper/65">
-              A textile sourcing partner for international buyers. Towels made by vetted manufacturing partners in Pakistan — specified, sampled and checked before they ship.
+              Your sourcing partner for Pakistani towels. Made by independent manufacturers in Pakistan — specified, sampled and checked before they ship. US office in Seattle; sourcing team in Karachi.
             </p>
             <div className="mt-8 space-y-2 text-[14.5px]">
               {c.email ? <a className="link-u block w-fit" href={`mailto:${c.email}`}>{c.email}</a> : <Tbc>Business email</Tbc>}
@@ -98,7 +103,7 @@ export default function Footer() {
           </p>
         </div>
         <p className="mt-6 max-w-3xl text-[12.5px] leading-relaxed text-paper/40">
-          WeaveSources is a sourcing company. Products are manufactured by independent manufacturing partners. Certifications, where listed, are held by the named partner.
+          WeaveSources is a sourcing company. Products are manufactured by independent manufacturing partners. Certifications, where listed, are held by the named partner. Product and manufacturing images are illustrative unless captioned otherwise.
         </p>
       </div>
     </footer>
