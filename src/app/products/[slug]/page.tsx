@@ -38,16 +38,9 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
   const inds = industries.filter((i) => i.products.includes(p.slug)).slice(0, 4);
   const rows = specRows(p, site.terms);
 
+  // No Product schema: Google requires offers/review/aggregateRating for it,
+  // and pricing is quote-based, so the markup would be flagged as invalid.
   const ld = [
-    {
-      "@context": "https://schema.org",
-      "@type": "Product",
-      name: p.name,
-      sku: p.sku,
-      description: p.intro,
-      category: c.name,
-      image: `${site.url}${productImage(p)}`,
-    },
     {
       "@context": "https://schema.org",
       "@type": "BreadcrumbList",
