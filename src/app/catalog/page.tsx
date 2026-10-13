@@ -14,14 +14,14 @@ export const metadata: Metadata = {
 };
 
 const contents = [
-  "Our sourcing model",
-  "How an order works, and what is checked",
-  "Product categories",
+  "Our sourcing model, and the people you deal with",
+  "The full range at a glance, by reference code",
   "One page per product, with specification fields and reference points",
-  "Customisation and private-label options",
-  "Packaging and export coordination",
-  "Manufacturing partners and credentials",
-  "How to request a quote or sample",
+  "Products sourced on enquiry",
+  "Private-label and customisation options",
+  "Labels, packaging and artwork",
+  "Samples, quotations and quality checks",
+  "How to order, with an inquiry checklist",
 ];
 
 export default function Page() {

@@ -79,7 +79,7 @@ export default function WhatsAppChat() {
     };
   }, [open]);
 
-  if (!lines.length || path.startsWith("/catalog/print")) return null;
+  if (!lines.length || path.startsWith("/print/")) return null;
 
   const toggle = () => {
     if (!open) setText(defaultMessage(path));

@@ -72,10 +72,12 @@ Keep clear space around it of at least half the mark's height; don't recolour be
 - **Products** — one data source: `src/content/products.ts` (6 categories, 15
   products). Product pages, `/collections/*`, `/products`, forms, sitemap and the
   PDF all read from it. Never put typical values in `confirmed`.
-- **PDF catalog** — `./scripts/make-catalog.sh` builds, serves `/catalog/print`
-  and prints it with headless Chrome to
-  `public/catalog/weavesources-towel-sourcing-catalog.pdf`. Rerun and commit
-  the PDF whenever products or contact details change.
+- **PDF catalog & presentation** — `./scripts/make-buyer-pack.sh` builds, serves
+  `/print/catalog` and `/print/presentation` and prints them with headless
+  Chrome to `docs/buyer-pack/`. The catalog is also copied to
+  `public/catalog/weavesources-towel-sourcing-catalog.pdf`, the site's download.
+  Rerun and commit the PDFs whenever products or contact details change. See
+  `docs/buyer-pack/README.md`.
 - **Media** — source files in `./content`; `node scripts/prepare-media.mjs`
   writes compressed, descriptively named images to `public/images` and the
   looping clips to `public/media`. All current imagery is AI-generated and is
